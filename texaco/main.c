@@ -1,11 +1,17 @@
 #include "shell.h"
 
+/**
+ * main - calls the concerned functions.
+ * @ac: Number of arguments passed.
+ * @av: arguments given.
+ * Return: 0.
+ */
 int main(int ac, char **av)
 {
-	char *command_cpy = NULL;
-	char *path, *delim = " \n\t", *command = NULL, **argv;
+	char *command_cpy = NULL, *path, *command = NULL, *delim = " \n\t";
 	size_t size = 0;
-	int exe, interactive = isatty(STDIN_FILENO);
+	int interactive = isatty(STDIN_FILENO);
+	(void)ac;
 
 	while (1)
 	{
@@ -21,15 +27,16 @@ int main(int ac, char **av)
 		if (!command)
 		{
 			free(path);
-			return (1);
+			return (0);
 		}
 
 		if (command[0] == '\n')
 			continue;
+
 		path = get_env("PATH");
 		command_cpy = strdup(command);
-		argv = tokenizer(command_cpy, delim);
-		exe = eway(command, command_cpy, argv, path);
+		av = tokenizer(command_cpy, delim);
+		eway(command, command_cpy, av, path);
 
 		free(command), free(command_cpy), free(argv), free(path);
 	}

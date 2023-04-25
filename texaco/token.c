@@ -1,5 +1,11 @@
 #include "shell.h"
 
+/**
+ * tokenizer - splits an array into tokens.
+ * @command: array to be splited.
+ * @delim: array of delimiters.
+ * Return: splited array.
+ */
 char **tokenizer(char *command, char *delim)
 {
 	int i, argc;

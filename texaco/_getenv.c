@@ -11,7 +11,7 @@ char *get_env(char *env_name)
 	char *env_var = NULL, *var_name = NULL, *env_value = NULL;
 	int i;
 
-	if (!environ|| !env_name)
+	if (!environ || !env_name)
 		return (NULL);
 
 	for (i = 0; environ[i]; i++)
