@@ -15,7 +15,6 @@ int main(int ac, char **av)
 
 	while (1)
 	{
-
 		if (interactive == 1)
 			printf("$ ");
 
@@ -24,21 +23,21 @@ int main(int ac, char **av)
 			free(command);
 			exit(EXIT_FAILURE);
 		}
+		path = get_env("PATH");
 		if (!command)
 		{
-			free(path);
+			free(path), free(command);
 			return (0);
 		}
 
 		if (command[0] == '\n')
 			continue;
 
-		path = get_env("PATH");
 		command_cpy = strdup(command);
 		av = tokenizer(command_cpy, delim);
 		eway(command, command_cpy, av, path);
 
-		free(command), free(command_cpy), free(argv), free(path);
+		free(command_cpy), free(av), free(path);
 	}
 	return (0);
 }
