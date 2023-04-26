@@ -30,14 +30,14 @@ int main(int ac, char **av)
 			return (0);
 		}
 
-		if (command[0] == '\n')
+		if (command[0] == '\n' || command[0] == 32 || command[0] == 9)
 			continue;
 
 		command_cpy = strdup(command);
 		av = tokenizer(command_cpy, delim);
 		eway(command, command_cpy, av, path);
 
-		free(command_cpy), free(av), free(path);
+		free(command_cpy), free(av);
 	}
 	return (0);
 }

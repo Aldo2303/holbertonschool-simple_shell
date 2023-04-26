@@ -33,7 +33,6 @@ char *findcmd(char *cmd, char *path)
 		}
 		free(where);
 	}
-	in = strcat(tpath[0], u_cmd);
 	free(tpath), free(u_cmd);
-	return (in);
+	return (NULL);
 }
