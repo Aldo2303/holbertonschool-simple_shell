@@ -21,7 +21,7 @@ int main(int ac, char **av)
 		if (getline(&command, &size, stdin) == -1)
 		{
 			free(command);
-			exit(EXIT_FAILURE);
+			exit(EXIT_SUCCESS);
 		}
 		path = get_env("PATH");
 		if (!command)
@@ -29,9 +29,9 @@ int main(int ac, char **av)
 			free(path), free(command);
 			return (0);
 		}
-
-		if (command[0] == '\n' || command[0] == 32 || command[0] == 9)
-			continue;
+		/* para modo interactivo funciona*/
+	/*if (command[0] == '\n' || command[0] == 32 || command[0] == 9)*/
+			/*continue;*/
 
 		command_cpy = strdup(command);
 		av = tokenizer(command_cpy, delim);

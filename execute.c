@@ -15,6 +15,7 @@ int execute(char *command, char *command_cpy, char **av, char *path)
 	if (pid == -1)
 	{
 		perror("Error");
+		free(path);
 		return (-1);
 	}
 	if (!pid)
@@ -40,12 +41,15 @@ int execute(char *command, char *command_cpy, char **av, char *path)
 int eway(char *cmd, char *cmdcpy, char **av, char *path)
 {
 	struct stat st;
-	int i;
+	int i, status = 0;
 
-	if (!strcmp(av[0], "exit"))
+	if (av[0])
 	{
-		free(cmd), free(cmdcpy), free(av), free(path);
-		exit(EXIT_SUCCESS);
+		if (!strcmp(av[0], "exit"))
+		{
+			free(cmd), free(cmdcpy), free(av), free(path);
+			exit(EXIT_SUCCESS);
+		}
 	}
 	for (i = 0; cmd[i]; i++)
 	{
@@ -57,8 +61,9 @@ int eway(char *cmd, char *cmdcpy, char **av, char *path)
 			}
 			execve(av[0], av, environ);
 			perror("Shell");
+			status = 127;
 			free(path);
-			return (0);
+			return (status);
 		}
 	}
 	return (exec_no_path(av, path, cmdcpy, cmd));
@@ -74,16 +79,22 @@ int eway(char *cmd, char *cmdcpy, char **av, char *path)
  */
 int exec_no_path(char **av, char *path, char *cmdcpy, char *cmd)
 {
-	char *where = findcmd(av[0], path);
+	char *where = NULL;
 
-	av[0] = where;
+	if (av[0])
+		where = findcmd(av[0], path);
 
-	if (where)
+	if (av[0] && where)
 	{
+		av[0] = where;
 		return (execute(cmd, cmdcpy, av, path));
 	}
-	execve(av[0], av, environ);
-	perror("Shell");
+	if (av[0] && strcmp(av[0], " "))
+	{
+		av[0] = "";
+		execve(av[0], av, environ);
+		perror("Shell");
+	}
 	free(path);
-	return (0);
+	return (1);
 }
