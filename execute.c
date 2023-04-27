@@ -16,7 +16,7 @@ int execute(char *command, char *command_cpy, char **av, char *path)
 	{
 		perror("Error");
 		free(path);
-		return (-1);
+		exit(EXIT_FAILURE);
 	}
 	if (!pid)
 	{
@@ -24,7 +24,7 @@ int execute(char *command, char *command_cpy, char **av, char *path)
 		{
 			perror("Shell");
 			free(command), free(command_cpy), free(av), free(path);
-			exit(EXIT_FAILURE);
+			exit(2);
 		}
 	}
 	waitpid(pid, &status, 0);
@@ -45,7 +45,7 @@ int execute(char *command, char *command_cpy, char **av, char *path)
 int eway(char *cmd, char *cmdcpy, char **av, char *path)
 {
 	struct stat st;
-	int i;
+	int i, fexit = 0;
 
 	if (av[0])
 	{
@@ -66,8 +66,13 @@ int eway(char *cmd, char *cmdcpy, char **av, char *path)
 			execve(av[0], av, environ);
 			perror("Shell");
 			free(path);
-			return (127);
+			fexit = 1;
 		}
+	}
+	if (fexit == 1)
+	{
+		free(cmd), free(cmdcpy), free(av);
+		exit(127);
 	}
 	return (exec_no_path(av, path, cmdcpy, cmd));
 }
@@ -83,6 +88,7 @@ int eway(char *cmd, char *cmdcpy, char **av, char *path)
 int exec_no_path(char **av, char *path, char *cmdcpy, char *cmd)
 {
 	char *where = NULL;
+	int fexit = 0;
 
 	if (av[0])
 		where = findcmd(av[0], path);
@@ -101,9 +107,15 @@ int exec_no_path(char **av, char *path, char *cmdcpy, char *cmd)
 	}
 
 	dprintf(STDERR_FILENO, "./hsh: 1: %s: not found\n", av[0]);
+	fexit = 1;
 	if (path && strlen(path))
 	{
 		free(path);
 	}
-	return (127);
+	if (fexit == 1)
+	{
+		free(cmd), free(cmdcpy), free(av);
+		exit(127);
+	}
+	return (0);
 }
