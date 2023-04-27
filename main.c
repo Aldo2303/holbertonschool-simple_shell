@@ -10,7 +10,7 @@ int main(int ac, char **av)
 {
 	char *command_cpy = NULL, *path, *command = NULL, *delim = " \n\t";
 	size_t size = 0;
-	int interactive = isatty(STDIN_FILENO), int status = 1;
+	int interactive = isatty(STDIN_FILENO), status = 1;
 	(void)ac;
 
 	while (1)
