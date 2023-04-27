@@ -9,7 +9,7 @@
  */
 int execute(char *command, char *command_cpy, char **av, char *path)
 {
-	int status = 0;
+	int exit_status, status;
 	pid_t pid = fork();
 
 	if (pid == -1)
@@ -25,9 +25,11 @@ int execute(char *command, char *command_cpy, char **av, char *path)
 		free(command), free(command_cpy), free(av), free(path);
 		exit(EXIT_FAILURE);
 	}
-	wait(&status);
+	waitpid(pid, &status, 0);
+	if (WIFEXITED(status))
+		exit_status = WEXITSTATUS(status);
 	free(path);
-	return (0);
+	return (exit_status);
 }
 
 /**
