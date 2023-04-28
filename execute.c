@@ -16,7 +16,7 @@ int execute(char *command, char *command_cpy, char **av, char *path)
 	{
 		perror("Error");
 		free(path);
-		exit(EXIT_FAILURE);
+		return (-1);
 	}
 	if (!pid)
 	{
@@ -24,7 +24,7 @@ int execute(char *command, char *command_cpy, char **av, char *path)
 		{
 			perror("Shell");
 			free(command), free(command_cpy), free(av), free(path);
-			exit(2);
+			exit(EXIT_FAILURE);
 		}
 	}
 	waitpid(pid, &status, 0);
@@ -42,17 +42,29 @@ int execute(char *command, char *command_cpy, char **av, char *path)
  * @path: PATH.
  * Return: calls the concerned function.
  */
-int eway(char *cmd, char *cmdcpy, char **av, char *path)
+int eway(char *cmd, char *cmdcpy, char **av, char *path, int count)
 {
 	struct stat st;
-	int i, fexit = 0;
+	int i;
 
 	if (av[0])
 	{
 		if (!strcmp(av[0], "exit"))
 		{
+			if (av[1] || count > 0)
+			{
+				free(cmd), free(cmdcpy), free(av), free(path);
+				exit(2);
+			}
 			free(cmd), free(cmdcpy), free(av), free(path);
 			exit(EXIT_SUCCESS);
+		}
+		if (!strcmp(av[0], "env"))
+		{
+			for (i = 0; environ[i]; i++)
+				printf("%s\n", environ[i]);
+			free (path);
+			return (0);
 		}
 	}
 	for (i = 0; cmd[i]; i++)
@@ -66,13 +78,8 @@ int eway(char *cmd, char *cmdcpy, char **av, char *path)
 			execve(av[0], av, environ);
 			perror("Shell");
 			free(path);
-			fexit = 1;
+			return (127);
 		}
-	}
-	if (fexit == 1)
-	{
-		free(cmd), free(cmdcpy), free(av);
-		exit(127);
 	}
 	return (exec_no_path(av, path, cmdcpy, cmd));
 }
@@ -88,7 +95,6 @@ int eway(char *cmd, char *cmdcpy, char **av, char *path)
 int exec_no_path(char **av, char *path, char *cmdcpy, char *cmd)
 {
 	char *where = NULL;
-	int fexit = 0;
 
 	if (av[0])
 		where = findcmd(av[0], path);
@@ -107,15 +113,7 @@ int exec_no_path(char **av, char *path, char *cmdcpy, char *cmd)
 	}
 
 	dprintf(STDERR_FILENO, "./hsh: 1: %s: not found\n", av[0]);
-	fexit = 1;
 	if (path && strlen(path))
-	{
 		free(path);
-	}
-	if (fexit == 1)
-	{
-		free(cmd), free(cmdcpy), free(av);
-		exit(127);
-	}
-	return (0);
+	return (127);
 }
