@@ -15,25 +15,25 @@ int main(int ac, char **av)
 
 	while (1)
 	{
+		path = get_env("PATH");
 		if (interactive == 1)
 			printf("$ ");
 
 		if (getline(&command, &size, stdin) == -1)
 		{
 			free(command);
+			if (path && strlen(path))
+				free(path);
 			exit(status);
 		}
-		path = get_env("PATH");
 		if (!command)
 		{
-			free(path), free(command);
-			return (0);
+			free(path);
+			return (status);
 		}
-
 		command_cpy = strdup(command);
 		av = tokenizer(command_cpy, delim);
 		status = eway(command, command_cpy, av, path);
-
 		free(command_cpy), free(av);
 	}
 	return (status);

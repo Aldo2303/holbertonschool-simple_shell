@@ -18,13 +18,13 @@ int execute(char *command, char *command_cpy, char **av, char *path)
 		free(path);
 		return (-1);
 	}
-	if (!pid)
+	if (pid == 0)
 	{
 		if (execve(av[0], av, environ) == -1)
 		{
 			perror("Shell");
 			free(command), free(command_cpy), free(av), free(path);
-			exit(EXIT_FAILURE);
+			exit(errno);
 		}
 	}
 	waitpid(pid, &status, 0);
@@ -42,7 +42,7 @@ int execute(char *command, char *command_cpy, char **av, char *path)
  * @path: PATH.
  * Return: calls the concerned function.
  */
-int eway(char *cmd, char *cmdcpy, char **av, char *path, int count)
+int eway(char *cmd, char *cmdcpy, char **av, char *path)
 {
 	struct stat st;
 	int i;
@@ -51,20 +51,13 @@ int eway(char *cmd, char *cmdcpy, char **av, char *path, int count)
 	{
 		if (!strcmp(av[0], "exit"))
 		{
-			if (av[1] || count > 0)
+			if (av[1])
 			{
 				free(cmd), free(cmdcpy), free(av), free(path);
 				exit(2);
 			}
 			free(cmd), free(cmdcpy), free(av), free(path);
 			exit(EXIT_SUCCESS);
-		}
-		if (!strcmp(av[0], "env"))
-		{
-			for (i = 0; environ[i]; i++)
-				printf("%s\n", environ[i]);
-			free (path);
-			return (0);
 		}
 	}
 	for (i = 0; cmd[i]; i++)

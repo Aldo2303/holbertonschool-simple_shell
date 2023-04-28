@@ -9,6 +9,7 @@ extern char **environ;
 #include <string.h>
 #include <sys/wait.h>
 #include <sys/types.h>
+#include <errno.h>
 #include <sys/stat.h>
 
 char *getprompt(void);
