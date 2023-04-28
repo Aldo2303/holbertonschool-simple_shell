@@ -110,3 +110,4 @@ int exec_no_path(char **av, char *path, char *cmdcpy, char *cmd)
 		free(path);
 	return (127);
 }
+
