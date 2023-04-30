@@ -103,4 +103,5 @@ You can rename the current file by clicking the file name in the navigation bar 
 ## Authors
 
 Aldo Sanchez
+
 Franco Herrera
